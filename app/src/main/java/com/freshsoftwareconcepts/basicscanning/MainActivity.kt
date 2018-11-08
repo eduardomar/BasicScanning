@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
     val spinnerScannerDevices: Spinner by lazy { this.findViewById<Spinner>(R.id.spinnerScannerDevices) }
     val spinnerTriggers: Spinner by lazy { this.findViewById<Spinner>(R.id.spinnerTriggers) }
 
-    val btnStartScan: Button? by lazy { this.findViewById<Button>(R.id.buttonStartScan) }
-    val btnStopScan: Button? by lazy { this.findViewById<Button>(R.id.buttonStopScan) }
+    val btnStartScan: Button by lazy { this.findViewById<Button>(R.id.buttonStartScan) }
+    val btnStopScan: Button by lazy { this.findViewById<Button>(R.id.buttonStopScan) }
 
     private var deviceList: ArrayList<ScannerInfo>? = null
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
             if (this.deviceList != null && this.deviceList!!.size != 0) {
                 this.scanner = this.barcodeManager!!.getDevice(this.deviceList!!.get(this.scannerIndex))
             } else {
-                this.textViewStatus?.text = "Status: Failed to get the specified scanner device! Please close and restart the application."
+                this.textViewStatus.text = "Status: Failed to get the specified scanner device! Please close and restart the application."
                 return
             }
 
@@ -100,10 +100,10 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
                 try {
                     it.enable()
                 } catch (e: ScannerException) {
-                    this.textViewStatus?.text = "Status: ${e.message}"
+                    this.textViewStatus.text = "Status: ${e.message}"
                 }
             } ?: run {
-                this.textViewStatus?.text = "Status: Failed to initialize the scanner device."
+                this.textViewStatus.text = "Status: Failed to initialize the scanner device."
             }
         }
     }
@@ -114,20 +114,20 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
                 it.cancelRead()
                 it.disable()
             } catch (e: Exception) {
-                this.textViewStatus?.text = "Status: ${e.message}"
+                this.textViewStatus.text = "Status: ${e.message}"
             }
 
             try {
                 it.removeDataListener(this)
                 it.removeStatusListener(this)
             } catch (e: Exception) {
-                this.textViewStatus?.text = "Status: ${e.message}"
+                this.textViewStatus.text = "Status: ${e.message}"
             }
 
             try {
                 it.release()
             } catch (e: Exception) {
-                this.textViewStatus?.text = "Status: ${e.message}"
+                this.textViewStatus.text = "Status: ${e.message}"
             }
 
             this.scanner = null
@@ -142,11 +142,11 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
         override fun onPostExecute(result: String?) {
             result?.let {
                 if (this@MainActivity.dataLength++ > 100) { // Limpiamo el cache despues de 100 escaneos
-                    this@MainActivity.textViewData?.text = ""
+                    this@MainActivity.textViewData.text = ""
                     this@MainActivity.dataLength = 0
                 }
 
-                this@MainActivity.textViewData?.append("${it}\n")
+                this@MainActivity.textViewData.append("${it}\n")
 
                 this@MainActivity.findViewById<ScrollView>(R.id.scrollView1).post(object : Runnable {
                     override fun run() {
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
         }
 
         override fun onPostExecute(result: String?) {
-            this@MainActivity.textViewStatus?.text = "Status: ${result}"
+            this@MainActivity.textViewStatus.text = "Status: ${result}"
         }
     }
 
@@ -174,18 +174,18 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
 
         override fun onPostExecute(result: Boolean?) {
             result?.let {
-                this@MainActivity.checkBoxEAN8?.isEnabled = it
-                this@MainActivity.checkBoxEAN13?.isEnabled = it
-                this@MainActivity.checkBoxCode39?.isEnabled = it
-                this@MainActivity.checkBoxCode128?.isEnabled = it
-                this@MainActivity.spinnerScannerDevices?.isEnabled = it
-                this@MainActivity.spinnerTriggers?.isEnabled = it
+                this@MainActivity.checkBoxEAN8.isEnabled = it
+                this@MainActivity.checkBoxEAN13.isEnabled = it
+                this@MainActivity.checkBoxCode39.isEnabled = it
+                this@MainActivity.checkBoxCode128.isEnabled = it
+                this@MainActivity.spinnerScannerDevices.isEnabled = it
+                this@MainActivity.spinnerTriggers.isEnabled = it
             }
         }
     }
 
     fun addSpinnerScannerDevicesListener() {
-        this.spinnerScannerDevices?.onItemSelectedListener = object : OnItemSelectedListener {
+        this.spinnerScannerDevices.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
     }
 
     fun addSpinnerTriggersListener() {
-        this.spinnerTriggers?.onItemSelectedListener = object : OnItemSelectedListener {
+        this.spinnerTriggers.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -212,19 +212,19 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
     }
 
     fun addStartScanButtonListener() {
-        this.btnStartScan?.setOnClickListener {
+        this.btnStartScan.setOnClickListener {
             this.startScan()
         }
     }
 
     fun addStopScanButtonListener() {
-        this.btnStopScan?.setOnClickListener {
+        this.btnStopScan.setOnClickListener {
             this.stopScan()
         }
     }
 
     fun addCheckBoxListener() {
-        this.checkBoxContinuous?.setOnCheckedChangeListener { _, isChecked ->
+        this.checkBoxContinuous.setOnCheckedChangeListener { _, isChecked ->
             this.bContinuousMode = isChecked
         }
     }
@@ -247,12 +247,12 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
                         ++spinnerIndex
                     }
                 } else {
-                    this.textViewStatus?.setText("Status: Failed to get the list of supported scanner devices! Please close and restart the application.")
+                    this.textViewStatus.setText("Status: Failed to get the list of supported scanner devices! Please close and restart the application.")
                 }
 
                 val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_spinner_item, friendlyNameList)
                 spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                this.spinnerScannerDevices?.adapter = spinnerAdapter
+                this.spinnerScannerDevices.adapter = spinnerAdapter
             }
         }
     }
@@ -275,14 +275,14 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
             if (it.isEnabled) {
                 try {
                     val config: ScannerConfig = it.config
-                    config.decoderParams.ean8.enabled = this.checkBoxEAN8!!.isChecked       // Set EAN8
-                    config.decoderParams.ean13.enabled = this.checkBoxEAN13!!.isChecked     // Set EAN13
-                    config.decoderParams.code39.enabled = this.checkBoxCode39!!.isChecked   // Set Code39
-                    config.decoderParams.code128.enabled = this.checkBoxCode128!!.isChecked // Set Code128
+                    config.decoderParams.ean8.enabled = this.checkBoxEAN8.isChecked       // Set EAN8
+                    config.decoderParams.ean13.enabled = this.checkBoxEAN13.isChecked     // Set EAN13
+                    config.decoderParams.code39.enabled = this.checkBoxCode39.isChecked   // Set Code39
+                    config.decoderParams.code128.enabled = this.checkBoxCode128.isChecked // Set Code128
 
                     it.config = config
                 } catch (e: ScannerException) {
-                    this.textViewStatus?.text = "Status: ${e.message}"
+                    this.textViewStatus.text = "Status: ${e.message}"
                 }
             }
         }
@@ -295,13 +295,13 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
             try {
                 if (it.isEnabled) {
                     it.read() // Enviar una nueva lectura
-                    this.bContinuousMode = this.checkBoxContinuous!!.isChecked
+                    this.bContinuousMode = this.checkBoxContinuous.isChecked
                     AsyncUiControlUpdate().execute(false);
                 } else {
-                    this.textViewStatus?.text = "Status: Scanner is not enabled"
+                    this.textViewStatus.text = "Status: Scanner is not enabled"
                 }
             } catch (e: ScannerException) {
-                this.textViewStatus?.text = "Status: ${e.message}"
+                this.textViewStatus.text = "Status: ${e.message}"
             }
         }
     }
@@ -313,7 +313,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
                 it.cancelRead() // Cancelar lectura pendiente
                 AsyncUiControlUpdate().execute(true);
             } catch (e: ScannerException) {
-                this.textViewStatus?.text = "Status: ${e.message}"
+                this.textViewStatus.text = "Status: ${e.message}"
             }
         }
     }
@@ -322,8 +322,8 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_spinner_item, this.triggerStrings)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        this.spinnerTriggers?.adapter = spinnerAdapter
-        this.spinnerTriggers?.setSelection(this.triggerIndex)
+        this.spinnerTriggers.adapter = spinnerAdapter
+        this.spinnerTriggers.setSelection(this.triggerIndex)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -337,18 +337,18 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
         try {
             val results = EMDKManager.getEMDKManager(applicationContext, this)
             if (results.statusCode != EMDKResults.STATUS_CODE.SUCCESS) {
-                this.textViewStatus?.setText("Status: " + "EMDKManager object request failed!")
+                this.textViewStatus.setText("Status: " + "EMDKManager object request failed!")
                 return
             }
         } catch (e: Exception) {
-            this.textViewStatus?.setText("Status: " + "EMDKManager object request failed! ${e.message}")
+            this.textViewStatus.setText("Status: " + "EMDKManager object request failed! ${e.message}")
             e.printStackTrace()
         }
 
-        this.checkBoxEAN8?.setOnCheckedChangeListener(this)
-        this.checkBoxEAN13?.setOnCheckedChangeListener(this)
-        this.checkBoxCode39?.setOnCheckedChangeListener(this)
-        this.checkBoxCode128?.setOnCheckedChangeListener(this)
+        this.checkBoxEAN8.setOnCheckedChangeListener(this)
+        this.checkBoxEAN13.setOnCheckedChangeListener(this)
+        this.checkBoxCode39.setOnCheckedChangeListener(this)
+        this.checkBoxCode128.setOnCheckedChangeListener(this)
 
         this.addSpinnerScannerDevicesListener()
         this.populateTriggers()
@@ -357,8 +357,8 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
         this.addStopScanButtonListener()
         this.addCheckBoxListener()
 
-        this.textViewData?.setSelected(true)
-        this.textViewData?.setMovementMethod(ScrollingMovementMethod())
+        this.textViewData.setSelected(true)
+        this.textViewData.setMovementMethod(ScrollingMovementMethod())
     }
 
     override fun onDestroy() {
@@ -443,7 +443,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
     }
 
     override fun onOpened(emdkManager: EMDKManager?) {
-        this.textViewStatus?.setText("Status: EMDK open success!")
+        this.textViewStatus.setText("Status: EMDK open success!")
 
         this.emdkManager = emdkManager
 
@@ -475,7 +475,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
             this.emdkManager = null
         }
 
-        textViewStatus?.setText("Status: EMDK closed unexpectedly! Please close and restart the application.")
+        textViewStatus.setText("Status: EMDK closed unexpectedly! Please close and restart the application.")
     }
 
     override fun onStatus(statusData: StatusData?) {
@@ -526,9 +526,10 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
                     AsyncStatusUpdate().execute(statusString)
                     AsyncUiControlUpdate().execute(true)
                 }
-            }
 
-            it
+                else -> {
+                }
+            }
         }
     }
 
@@ -543,7 +544,6 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
     }
 
     override fun onConnectionChange(scannerInfo: ScannerInfo?, connectionState: BarcodeManager.ConnectionState?) {
-        var status = ""
         var scannerName = ""
         var statusExtScanner = connectionState.toString()
         var scannerNameExtScanner = scannerInfo?.friendlyName
@@ -552,7 +552,7 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
             scannerName = this.deviceList!!.get(this.scannerIndex).friendlyName
         }
 
-        if (scannerName.equals(scannerNameExtScanner)) {
+        val status = if (scannerName.equals(scannerNameExtScanner)) {
             when (connectionState) {
                 ConnectionState.CONNECTED -> {
                     this.deInitScanner()
@@ -567,9 +567,9 @@ class MainActivity : AppCompatActivity(), EMDKListener, StatusListener, DataList
                 }
             }
 
-            status = "${scannerNameExtScanner}: ${statusExtScanner}"
+            "${scannerNameExtScanner}: ${statusExtScanner}"
         } else {
-            status = "${statusString} ${scannerNameExtScanner}: ${statusExtScanner}"
+            "${statusString} ${scannerNameExtScanner}: ${statusExtScanner}"
         }
 
         AsyncStatusUpdate().execute(status)
